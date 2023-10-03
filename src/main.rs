@@ -7,9 +7,22 @@ fn main() {
 }
 
 fn App(cx: Scope) -> Element {
-    cx.render(rsx! {
-        div {
-            "Hello, world!"
+    render! {
+        TestComponent {
+
         }
-    })
+    }
+}
+
+fn TestComponent(cx: Scope) -> Element {
+    let name = "Mew";
+    let time = chrono::Utc::now();
+
+    render! {
+        div {
+            padding: "0.5em",
+            position: "relative",
+            "Hello, {name}! It is currently {time}"
+        }
+    }
 }
