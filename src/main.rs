@@ -5,15 +5,28 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ChartData {
-    pub id: i64,
+    pub id: i32,
     pub title: String,
     pub artist: String,
     pub charter: String,
-    pub uploader: String,
+    pub uploader: i32,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct ChartRequestData {
+    pub version: i32,
+    pub status: i32,
+    pub data: ChartData,
+}
+
+async fn get_chart(id: i64) -> Result<ChartData, reqwest::Error> {
+    let url = format!("https://spinsha.re/api/song/{}", id);
+    let chart = reqwest::get(&url).await?.json::<ChartRequestData>().await?;
+    Ok(chart.data)
 }
 
 #[inline_props]
-fn ChartListing(cx: Scope, chart: ChartData) -> Element {
+fn ChartDisplay(cx: Scope, chart: ChartData) -> Element {
     let ChartData {
         id,
         title,
@@ -44,23 +57,37 @@ fn ChartListing(cx: Scope, chart: ChartData) -> Element {
                 }
                 div {
                     padding_left: "0.5rem",
-                    "Uploaded by {uploader}"
+                    "Uploaded by #{uploader}"
                 }
             }
         }
     }
 }
 
+fn ChartListing(cx: Scope) -> Element {
+    let chart = use_future(cx, (), |_| get_chart(1116));
+
+    match chart.value() {
+        Some(Ok(chart)) => {
+            render! {
+                div {
+                    ChartDisplay { chart: chart.clone() }
+                }
+            }
+        }
+        Some(Err(err)) => {
+            render! {"An error occurred while fetching chart: {err}"}
+        }
+        None => {
+            render! {"API stuff loading thing idk"}
+        }
+    }
+}
+
 fn App(cx: Scope) -> Element {
     render! {
-        ChartListing {
-            chart: ChartData {
-                id: 727,
-                title: "WYSI - When You See It".to_string(),
-                artist: "Camellia".to_string(),
-                charter: "The charter who sees it".to_string(),
-                uploader: "The uploader who sees it".to_string(),
-            }
+        div {
+            ChartListing {}
         }
     }
 }
