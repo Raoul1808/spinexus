@@ -5,7 +5,7 @@ use dioxus::prelude::*;
 mod models;
 
 use models::Chart;
-use models::get_chart;
+use models::get_hot_charts;
 
 #[inline_props]
 fn ChartDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
@@ -37,9 +37,13 @@ fn ChartDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
                     padding_left: "0.5rem",
                     "Charted by {charter}"
                 }
-                div {
-                    padding_left: "0.5rem",
-                    "Uploaded by #{uploader}"
+                if let Some(uploader) = uploader {
+                    rsx! {
+                        div {
+                            padding_left: "0.5rem",
+                            "Uploaded by #{uploader}"
+                        }
+                    }
                 }
             }
         }
@@ -47,13 +51,12 @@ fn ChartDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
 }
 
 fn ChartListing(cx: Scope) -> Element {
-    let chart = use_future(cx, (), |_| get_chart(1116));
-
-    match chart.value() {
-        Some(Ok(chart)) => {
+    let charts = use_future(cx, (), |_| get_hot_charts());
+    match charts.value() {
+        Some(Ok(charts)) => {
             render! {
-                div {
-                    ChartDisplay { chart: &chart }
+                for chart in &charts {
+                    ChartDisplay { chart: chart }
                 }
             }
         }
