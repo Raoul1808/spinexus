@@ -12,6 +12,14 @@ pub struct Chart {
     // todo: implement more on the way
 }
 
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct User {
+    pub id: i32,
+    pub username: String,
+    pub avatar: String,
+    // todo: implement more on the way
+}
+
 #[derive(Serialize, Deserialize)]
 struct SpinRequest<T> {
     version: i32,
@@ -19,7 +27,6 @@ struct SpinRequest<T> {
     data: T,
 }
 
-#[allow(dead_code)]  // todo: actually use the dead code
 pub async fn get_chart(id: i32) -> Result<Chart, reqwest::Error> {
     let res = reqwest::get(format!("https://spinsha.re/api/song/{}", id))
         .await?
@@ -36,4 +43,13 @@ pub async fn get_hot_charts() -> Result<Vec<Chart>, reqwest::Error> {
         .json::<SpinRequest<Vec<Chart>>>()
         .await?;
     Ok(res.data)
+}
+
+pub async fn get_user(id: i32) -> Result<User, reqwest::Error> {
+    let res = reqwest::get(format!("https://spinsha.re/api/user/{}", id))
+        .await?
+        .error_for_status()?
+        .json::<SpinRequest<User>>()
+        .await?;
+    Ok(res.data)    
 }

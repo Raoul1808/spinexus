@@ -6,9 +6,10 @@ use dioxus_router::prelude::*;
 
 mod models;
 
-use models::Chart;
+use models::{Chart, User};
 use models::get_chart;
 use models::get_hot_charts;
+use models::get_user;
 
 #[derive(Routable, PartialEq, Debug, Clone)]
 enum Route {
@@ -63,6 +64,35 @@ fn Chart(cx: Scope, id: i32) -> Element {
 }
 
 #[inline_props]
+fn ShowUploader(cx: Scope, id: i32) -> Element {
+    let user = use_future(cx, (), |_| get_user(*id));
+    match user.value() {
+        Some(Ok(user)) => {
+            let User {
+                username,
+                avatar,
+                ..
+            } = user;
+            render! {
+                img {
+                    width: "64px",
+                    src: "{avatar}"
+                }
+                div {
+                    "{username}"
+                }
+            }
+        }
+        Some(Err(err)) => {
+            render! {"Err {err}"}
+        }
+        None => {
+            render! {"wut"}
+        }
+    }
+}
+
+#[inline_props]
 fn ChartFullDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
     let Chart {
         title,
@@ -93,9 +123,7 @@ fn ChartFullDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
             }
             if let Some(uploader) = uploader {
                 rsx! {
-                    div {
-                        "Uploaded by {uploader}"
-                    }
+                    ShowUploader { id: *uploader }
                 }
             }
         }
