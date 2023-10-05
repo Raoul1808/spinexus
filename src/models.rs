@@ -4,9 +4,11 @@ use serde::{Serialize, Deserialize};
 pub struct Chart {
     pub id: i32,
     pub title: String,
+    pub subtitle: String,
     pub artist: String,
     pub charter: String,
     pub uploader: Option<i32>,
+    pub cover: String,
     // todo: implement more on the way
 }
 

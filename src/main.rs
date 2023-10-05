@@ -6,12 +6,15 @@ use dioxus_router::prelude::*;
 mod models;
 
 use models::Chart;
+use models::get_chart;
 use models::get_hot_charts;
 
 #[derive(Routable, PartialEq, Debug, Clone)]
 enum Route {
     #[route("/")]
     Index {},
+    #[route("/chart/:id")]
+    Chart { id: i32 },
     #[route("/:..route")]
     NotFound { route: Vec<String> },
 }
@@ -35,7 +38,71 @@ fn NotFound(cx: Scope, route: Vec<String>) -> Element {
 }
 
 #[inline_props]
-fn ChartDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
+fn Chart(cx: Scope, id: i32) -> Element {
+    let chart = use_future(cx, (), |_| get_chart(*id));
+    match chart.value() {
+        Some(Ok(chart)) => {
+            render! {
+                div {
+                    Link {
+                        to: Route::Index {},
+                        "<-- Go back home"
+                    }
+                }
+                ChartFullDisplay { chart: chart }
+            }
+        }
+        Some(Err(err)) => {
+            render! {"An error occurred while fetching chart: {err}"}
+        }
+        None => {
+            render! {"API stuff loading thing idk"}
+        }
+    }
+}
+
+#[inline_props]
+fn ChartFullDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
+    let Chart {
+        title,
+        artist,
+        charter,
+        uploader,
+        cover,
+        ..
+    } = chart;
+
+    render! {
+        div {
+            img {
+                src: "{cover}"
+            }
+        }
+        div {
+            div {
+                font_size: 32,
+                "{title}"
+            }
+            div {
+                color: "gray",
+                "{artist}"
+            }
+            div {
+                "Charted by {charter}"
+            }
+            if let Some(uploader) = uploader {
+                rsx! {
+                    div {
+                        "Uploaded by {uploader}"
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[inline_props]
+fn ChartShortDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
     let Chart {
         id,
         title,
@@ -52,7 +119,7 @@ fn ChartDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
             div {
                 font_size: "1.5em",
                 Link {
-                    to: Route::NotFound { route: (vec!["hello".into(), "world".into()]) },
+                    to: Route::Chart { id: chart.id },
                     "{title} (#{id})"
                 }
             }
@@ -86,7 +153,7 @@ fn ChartListing(cx: Scope) -> Element {
         Some(Ok(charts)) => {
             render! {
                 for chart in &charts {
-                    ChartDisplay { chart: chart }
+                    ChartShortDisplay { chart: chart }
                 }
             }
         }
