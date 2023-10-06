@@ -18,3 +18,5 @@ Cargo.lock
 ### Custom ###
 # Dioxus output path
 dist/
+
+.idea/
