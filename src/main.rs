@@ -5,16 +5,20 @@ use dioxus_desktop::{Config, LogicalSize, WindowBuilder};
 use dioxus_router::prelude::*;
 
 mod models;
-
-use models::{Chart, User};
-use models::get_chart;
-use models::get_hot_charts;
-use models::get_user;
+use models::*;
 
 #[derive(Routable, PartialEq, Debug, Clone)]
 enum Route {
     #[route("/")]
     Index {},
+    #[nest("/charts")]
+        #[route("/updated")]
+        UpdatedCharts {},
+        #[route("/month")]
+        HotMonthCharts {},
+        #[route("/week")]
+        HotWeekCharts {},
+    #[end_nest]
     #[route("/chart/:id")]
     Chart { id: i32 },
     #[route("/:..route")]
@@ -23,10 +27,60 @@ enum Route {
 
 fn Index(cx: Scope) -> Element {
     render! {
+        BackHome {}
         div {
             "This is the index page!"
         }
-        ChartListing {}
+        ul {
+            li {
+                Link {
+                    to: Route::UpdatedCharts {},
+                    "Updated"
+                }
+            }
+            li {
+                Link {
+                    to: Route::HotMonthCharts {},
+                    "Hot this month"
+                }
+            }
+            li {
+                Link {
+                    to: Route::HotWeekCharts {},
+                    "Hot this week"
+                }
+            }
+        }
+    }
+}
+
+fn UpdatedCharts(cx: Scope) -> Element {
+    render! {
+        BackHome {}
+        h1 {
+            "Last updated charts"
+        }
+        ChartUpdatedListing {}
+    }
+}
+
+fn HotMonthCharts(cx: Scope) -> Element {
+    render! {
+        BackHome {}
+        h1 {
+            "Hot this month"
+        }
+        ChartHotMonthListing {}
+    }
+}
+
+fn HotWeekCharts(cx: Scope) -> Element {
+    render! {
+        BackHome {}
+        h1 {
+            "Hot this week"
+        }
+        ChartHotWeekListing {}
     }
 }
 
@@ -45,20 +99,21 @@ fn Chart(cx: Scope, id: i32) -> Element {
     match chart.value() {
         Some(Ok(chart)) => {
             render! {
-                div {
-                    Link {
-                        to: Route::Index {},
-                        "<-- Go back home"
-                    }
-                }
+                BackHome {}
                 ChartFullDisplay { chart: chart }
             }
         }
         Some(Err(err)) => {
-            render! {"An error occurred while fetching chart: {err}"}
+            render! {
+                BackHome {}
+                "An error occurred while fetching chart: {err}"
+            }
         }
         None => {
-            render! {"API stuff loading thing idk"}
+            render! {
+                BackHome {}
+                "API stuff loading thing idk"
+            }
         }
     }
 }
@@ -176,21 +231,87 @@ fn ChartShortDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
     }
 }
 
-fn ChartListing(cx: Scope) -> Element {
-    let charts = use_future(cx, (), |_| get_hot_charts());
+fn ChartUpdatedListing(cx: Scope) -> Element {
+    let charts = use_future(cx, (), |_| get_updated_charts());
     match charts.value() {
         Some(Ok(charts)) => {
             render! {
-                for chart in &charts {
-                    ChartShortDisplay { chart: chart }
+                div {
+                    class: "chart-list-view",
+                    for chart in &charts {
+                        ChartShortDisplay { chart: chart }
+                    }
                 }
             }
         }
         Some(Err(err)) => {
-            render! {"An error occurred while fetching chart: {err}"}
+            render! {
+                "An error occurred while fetching charts: {err}"
+            }
+        }
+        None => {
+            render! {
+                "API stuff loading thing idk"
+            }
+        }
+    }
+}
+
+fn ChartHotWeekListing(cx: Scope) -> Element {
+    let charts = use_future(cx, (), |_| get_weekly_hot_charts());
+    match charts.value() {
+        Some(Ok(charts)) => {
+            render! {
+                div {
+                    class: "chart-list-view",
+                    for chart in &charts {
+                        ChartShortDisplay { chart: chart }
+                    }
+                }
+            }
+        }
+        Some(Err(err)) => {
+            render! {
+                "An error occurred while fetching charts: {err}"
+            }
+        }
+        None => {
+            render! {
+                "API stuff loading thing idk"
+            }
+        }
+    }
+}
+
+fn ChartHotMonthListing(cx: Scope) -> Element {
+    let charts = use_future(cx, (), |_| get_monthly_hot_charts());
+    match charts.value() {
+        Some(Ok(charts)) => {
+            render! {
+                div {
+                    class: "chart-list-view",
+                    for chart in &charts {
+                        ChartShortDisplay { chart: chart }
+                    }
+                }
+            }
+        }
+        Some(Err(err)) => {
+            render! {"An error occurred while fetching charts: {err}"}
         }
         None => {
             render! {"API stuff loading thing idk"}
+        }
+    }
+}
+
+fn BackHome(cx: Scope) -> Element {
+    render! {
+        div {
+            Link {
+                to: Route::Index {},
+                "Home"
+            }
         }
     }
 }

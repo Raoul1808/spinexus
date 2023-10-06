@@ -36,7 +36,25 @@ pub async fn get_chart(id: i32) -> Result<Chart, reqwest::Error> {
     Ok(res.data)
 }
 
-pub async fn get_hot_charts() -> Result<Vec<Chart>, reqwest::Error> {
+pub async fn get_updated_charts() -> Result<Vec<Chart>, reqwest::Error> {
+    let res = reqwest::get("https://spinsha.re/api/songs/updated/0")
+    .await?
+    .error_for_status()?
+    .json::<SpinRequest<Vec<Chart>>>()
+        .await?;
+    Ok(res.data)
+}
+
+pub async fn get_weekly_hot_charts() -> Result<Vec<Chart>, reqwest::Error> {
+    let res = reqwest::get("https://spinsha.re/api/songs/hotThisWeek/0")
+    .await?
+    .error_for_status()?
+    .json::<SpinRequest<Vec<Chart>>>()
+        .await?;
+    Ok(res.data)
+}
+
+pub async fn get_monthly_hot_charts() -> Result<Vec<Chart>, reqwest::Error> {
     let res = reqwest::get("https://spinsha.re/api/songs/hotThisMonth/0")
         .await?
         .error_for_status()?
