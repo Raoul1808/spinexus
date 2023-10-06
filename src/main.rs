@@ -188,42 +188,29 @@ fn ChartFullDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
 #[inline_props]
 fn ChartShortDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
     let Chart {
-        id,
         title,
         artist,
         charter,
-        uploader,
+        cover,
         ..
     } = chart;
 
     render! {
-        div {
-            padding: "0.5em",
-            position: "relative",
+        Link {
+            class: "no-underline",
+            to: Route::Chart { id: chart.id },
             div {
-                font_size: "1.5em",
-                Link {
-                    to: Route::Chart { id: chart.id },
-                    "{title} (#{id})"
-                }
-            }
-            div {
-                display: "flex",
-                flex_direction: "row",
-                color: "gray",
-                div {
-                    "By {artist}"
+                class: "chart-short-view",
+                img {
+                    src: "{cover}"
                 }
                 div {
-                    padding_left: "0.5rem",
-                    "Charted by {charter}"
-                }
-                if let Some(uploader) = uploader {
-                    rsx! {
-                        div {
-                            padding_left: "0.5rem",
-                            "Uploaded by #{uploader}"
-                        }
+                    div {
+                        font_size: "1.5em",
+                        "{title}"
+                    }
+                    div {
+                        "{artist} • Charted by {charter}"
                     }
                 }
             }
@@ -318,6 +305,7 @@ fn BackHome(cx: Scope) -> Element {
 
 fn App(cx: Scope) -> Element {
     render! {
+        style { include_str!("../style.css") }
         Router::<Route> {}
     }
 }

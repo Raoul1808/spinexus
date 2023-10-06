@@ -1,0 +1,42 @@
+html {
+    background-color: rgb(225, 225, 225);
+}
+
+.no-underline {
+    text-decoration: none;
+}
+
+.chart-list-view {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.chart-short-view {
+    display: flex;
+    padding: 0.5em;
+    position: relative;
+    background-color: rgb(187, 187, 187);
+    border-radius: 3px;
+}
+
+.chart-short-view img {
+    width: 64px;
+    vertical-align: middle;
+    margin-right: 0.5rem;
+}
+
+.chart-short-view div {
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-short-view div div {
+    display: flex;
+    flex-direction: row;
+    color: black;
+}
+
+.chart-short-view div div + div {
+    color: dimgray;
+}
