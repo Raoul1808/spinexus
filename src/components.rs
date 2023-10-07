@@ -26,12 +26,18 @@ fn UserShortDisplay(cx: Scope, id: i32) -> Element {
                 ..
             } = user;
             render! {
-                img {
-                    width: "64px",
-                    src: "{avatar}"
-                }
-                div {
-                    "{username}"
+                Link {
+                    to: Route::User { id: *id },
+                    div {
+                        class: "user-short-view",
+                        img {
+                            width: "64px",
+                            src: "{avatar}"
+                        }
+                        div {
+                            "{username}"
+                        }
+                    }
                 }
             }
         }
@@ -40,6 +46,33 @@ fn UserShortDisplay(cx: Scope, id: i32) -> Element {
         }
         None => {
             render! {"wut"}
+        }
+    }
+}
+
+#[inline_props]
+pub fn UserFullDisplay<'a>(cx: Scope, user: &'a User) -> Element {
+    let User {
+        id,
+        username,
+        avatar,
+        ..
+    } = user;
+
+    render! {
+        div {
+            img {
+                src: "{avatar}"
+            }
+            div {
+                "{username}"
+            }
+        }
+        div {
+            h2 {
+                "Charts uploaded"
+            }
+            ChartUserDisplay {id: *id}
         }
     }
 }
@@ -169,6 +202,29 @@ pub fn ChartHotWeekListing(cx: Scope) -> Element {
 
 pub fn ChartHotMonthListing(cx: Scope) -> Element {
     let charts = use_future(cx, (), |_| get_monthly_hot_charts());
+    match charts.value() {
+        Some(Ok(charts)) => {
+            render! {
+                div {
+                    class: "chart-list-view",
+                    for chart in &charts {
+                        ChartShortDisplay { chart: chart }
+                    }
+                }
+            }
+        }
+        Some(Err(err)) => {
+            render! {"An error occurred while fetching charts: {err}"}
+        }
+        None => {
+            render! {"API stuff loading thing idk"}
+        }
+    }
+}
+
+#[inline_props]
+fn ChartUserDisplay(cx: Scope, id: i32) -> Element {
+    let charts = use_future(cx, {}, |_| get_charts_for_user(*id));
     match charts.value() {
         Some(Ok(charts)) => {
             render! {

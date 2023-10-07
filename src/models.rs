@@ -38,18 +38,18 @@ pub async fn get_chart(id: i32) -> Result<Chart, reqwest::Error> {
 
 pub async fn get_updated_charts() -> Result<Vec<Chart>, reqwest::Error> {
     let res = reqwest::get("https://spinsha.re/api/songs/updated/0")
-    .await?
-    .error_for_status()?
-    .json::<SpinRequest<Vec<Chart>>>()
+        .await?
+        .error_for_status()?
+        .json::<SpinRequest<Vec<Chart>>>()
         .await?;
     Ok(res.data)
 }
 
 pub async fn get_weekly_hot_charts() -> Result<Vec<Chart>, reqwest::Error> {
     let res = reqwest::get("https://spinsha.re/api/songs/hotThisWeek/0")
-    .await?
-    .error_for_status()?
-    .json::<SpinRequest<Vec<Chart>>>()
+        .await?
+        .error_for_status()?
+        .json::<SpinRequest<Vec<Chart>>>()
         .await?;
     Ok(res.data)
 }
@@ -70,4 +70,13 @@ pub async fn get_user(id: i32) -> Result<User, reqwest::Error> {
         .json::<SpinRequest<User>>()
         .await?;
     Ok(res.data)    
+}
+
+pub async fn get_charts_for_user(id: i32) -> Result<Vec<Chart>, reqwest::Error> {
+    let res = reqwest::get(format!("https://spinsha.re/api/user/{}/charts", id))
+        .await?
+        .error_for_status()?
+        .json::<SpinRequest<Vec<Chart>>>()
+        .await?;
+    Ok(res.data)
 }

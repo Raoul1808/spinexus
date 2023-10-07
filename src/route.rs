@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 use dioxus_router::prelude::*;
 
 use crate::components::*;
-use crate::models::get_chart;
+use crate::models::{get_chart, get_user};
 
 #[derive(Routable, PartialEq, Debug, Clone)]
 pub enum Route {
@@ -18,6 +18,8 @@ pub enum Route {
     #[end_nest]
     #[route("/chart/:id")]
     Chart { id: i32 },
+    #[route("/user/:id")]
+    User { id: i32 },
     #[route("/:..route")]
     NotFound { route: Vec<String> },
 }
@@ -105,6 +107,31 @@ fn Chart(cx: Scope, id: i32) -> Element {
             render! {
                 BackHome {}
                 "An error occurred while fetching chart: {err}"
+            }
+        }
+        None => {
+            render! {
+                BackHome {}
+                "API stuff loading thing idk"
+            }
+        }
+    }
+}
+
+#[inline_props]
+fn User(cx: Scope, id: i32) -> Element {
+    let user = use_future(cx, (), |_| get_user(*id));
+    match user.value() {
+        Some(Ok(user)) => {
+            render! {
+                BackHome{}
+                UserFullDisplay { user: user }
+            }
+        }
+        Some(Err(err)) => {
+            render! {
+                BackHome {}
+                "An error occurred while fetching user: {err}"
             }
         }
         None => {

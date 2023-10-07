@@ -40,3 +40,17 @@ html {
 .chart-short-view div div + div {
     color: dimgray;
 }
+
+.user-short-view {
+    display: flex;
+    padding: 0.5em;
+    position: relative;
+    background-color: rgb(200, 200, 200);
+    border-radius: 3px;
+}
+
+.user-short-view img {
+    width: 32px;
+    vertical-align: middle;
+    margin-right: 0.5rem;
+}
