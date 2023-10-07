@@ -40,6 +40,10 @@ pub async fn get_chart(id: i32) -> Result<Chart, reqwest::Error> {
     request_data(format!("https://spinsha.re/api/song/{}", id)).await
 }
 
+pub async fn get_new_charts(page: i32) -> Result<Vec<Chart>, reqwest::Error> {
+    request_data(format!("https://spinsha.re/api/songs/new/{}", page)).await
+}
+
 pub async fn get_updated_charts(page: i32) -> Result<Vec<Chart>, reqwest::Error> {
     request_data(format!("https://spinsha.re/api/songs/updated/{}", page)).await
 }

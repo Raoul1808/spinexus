@@ -9,6 +9,8 @@ pub enum Route {
     #[route("/")]
     Index {},
     #[nest("/charts")]
+        #[route("/new")]
+        NewCharts {},
         #[route("/updated")]
         UpdatedCharts {},
         #[route("/month")]
@@ -34,6 +36,12 @@ fn Index(cx: Scope) -> Element {
         ul {
             li {
                 Link {
+                    to: Route::NewCharts {},
+                    "New"
+                }
+            }
+            li {
+                Link {
                     to: Route::UpdatedCharts {},
                     "Updated"
                 }
@@ -51,6 +59,16 @@ fn Index(cx: Scope) -> Element {
                 }
             }
         }
+    }
+}
+
+fn NewCharts(cx: Scope) -> Element {
+    render! {
+        BackHome{}
+        h1 {
+            "Newest charts"
+        }
+        ChartNewListing {}
     }
 }
 

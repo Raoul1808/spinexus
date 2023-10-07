@@ -148,6 +148,32 @@ fn ChartShortDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
     }
 }
 
+pub fn ChartNewListing(cx: Scope) -> Element {
+    let charts = use_future(cx, (), |_| get_new_charts(0));
+    match charts.value() {
+        Some(Ok(charts)) => {
+            render! {
+                div {
+                    class: "chart-list-view",
+                    for chart in &charts {
+                        ChartShortDisplay { chart: chart }
+                    }
+                }
+            }
+        }
+        Some(Err(err)) => {
+            render! {
+                "An error occurred while fetching charts: {err}"
+            }
+        }
+        None => {
+            render! {
+                "API stuff loading thing idk"
+            }
+        }
+    }
+}
+
 pub fn ChartUpdatedListing(cx: Scope) -> Element {
     let charts = use_future(cx, (), |_| get_updated_charts(0));
     match charts.value() {
