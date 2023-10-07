@@ -149,7 +149,7 @@ fn ChartShortDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
 }
 
 pub fn ChartUpdatedListing(cx: Scope) -> Element {
-    let charts = use_future(cx, (), |_| get_updated_charts());
+    let charts = use_future(cx, (), |_| get_updated_charts(0));
     match charts.value() {
         Some(Ok(charts)) => {
             render! {
@@ -175,7 +175,7 @@ pub fn ChartUpdatedListing(cx: Scope) -> Element {
 }
 
 pub fn ChartHotWeekListing(cx: Scope) -> Element {
-    let charts = use_future(cx, (), |_| get_weekly_hot_charts());
+    let charts = use_future(cx, (), |_| get_weekly_hot_charts(0));
     match charts.value() {
         Some(Ok(charts)) => {
             render! {
@@ -201,7 +201,7 @@ pub fn ChartHotWeekListing(cx: Scope) -> Element {
 }
 
 pub fn ChartHotMonthListing(cx: Scope) -> Element {
-    let charts = use_future(cx, (), |_| get_monthly_hot_charts());
+    let charts = use_future(cx, (), |_| get_monthly_hot_charts(0));
     match charts.value() {
         Some(Ok(charts)) => {
             render! {
