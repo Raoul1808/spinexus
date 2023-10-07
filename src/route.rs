@@ -68,7 +68,7 @@ fn NewCharts(cx: Scope) -> Element {
         h1 {
             "Newest charts"
         }
-        ChartNewListing {}
+        ChartListing { mode: ChartListingMode::New }
     }
 }
 
@@ -78,7 +78,7 @@ fn UpdatedCharts(cx: Scope) -> Element {
         h1 {
             "Last updated charts"
         }
-        ChartUpdatedListing {}
+        ChartListing { mode: ChartListingMode::Updated }
     }
 }
 
@@ -88,7 +88,7 @@ fn HotMonthCharts(cx: Scope) -> Element {
         h1 {
             "Hot this month"
         }
-        ChartHotMonthListing {}
+        ChartListing { mode: ChartListingMode::HotMonth }
     }
 }
 
@@ -98,7 +98,7 @@ fn HotWeekCharts(cx: Scope) -> Element {
         h1 {
             "Hot this week"
         }
-        ChartHotWeekListing {}
+        ChartListing { mode: ChartListingMode::HotWeek }
     }
 }
 
