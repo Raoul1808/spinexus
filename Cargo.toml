@@ -11,5 +11,7 @@ confy = "0.5.1"
 dioxus = "0.4.0"
 dioxus-desktop = "0.4.0"
 dioxus-router = "0.4.1"
+directories = "5.0.1"
 reqwest = { version = "0.11.22", features = ["json"] }
+rfd = "0.11.4"
 serde = "1.0.188"

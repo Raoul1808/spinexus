@@ -1,5 +1,7 @@
 use dioxus::prelude::*;
 use dioxus_router::prelude::*;
+use directories::UserDirs;
+use rfd::FileDialog;
 
 use crate::app_config::AppConfig;
 use crate::components::*;
@@ -172,7 +174,7 @@ fn User(cx: Scope, id: i32) -> Element {
 fn AppSettings(cx: Scope) -> Element {
     let config = use_shared_state::<AppConfig>(cx).unwrap();
     let customs_path = &config.read().customs_path;
-    
+
     render! {
         BackHome {}
         div {
@@ -180,7 +182,17 @@ fn AppSettings(cx: Scope) -> Element {
                 "Current path: {customs_path}"
             }
             button {
-                onclick: move |_event| { println!("todo: make the event handler") },
+                onclick: move |_event| {
+                    let user_dir = UserDirs::new().unwrap();
+                    let home_dir = user_dir.home_dir();
+                    let folder = FileDialog::new()
+                        .set_directory(home_dir)
+                        .pick_folder();
+                    if let Some(folder) = folder {
+                        config.write().customs_path = folder.as_path().display().to_string();
+                        let _ = config.write().save();
+                    }
+                },
                 "Browse"
             }
         }
