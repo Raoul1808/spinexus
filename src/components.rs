@@ -24,6 +24,15 @@ pub fn BackHome(cx: Scope) -> Element {
     }
 }
 
+pub fn ShowLoading(cx: Scope) -> Element {
+    render! {
+        div {
+            class: "center",
+            "Loading..."
+        }
+    }
+}
+
 #[inline_props]
 fn UserShortDisplay(cx: Scope, id: i32) -> Element {
     let user = use_future(cx, (), |_| get_user(*id));
@@ -187,7 +196,7 @@ pub fn ChartListing(cx: Scope, mode: ChartListingMode) -> Element {
         }
         None => {
             render! {
-                "API stuff loading thing idk"
+                ShowLoading {}
             }
         }
     }

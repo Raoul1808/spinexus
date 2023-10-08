@@ -54,3 +54,9 @@ html {
     vertical-align: middle;
     margin-right: 0.5rem;
 }
+
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -140,7 +140,7 @@ fn Chart(cx: Scope, id: i32) -> Element {
         None => {
             render! {
                 BackHome {}
-                "API stuff loading thing idk"
+                ShowLoading {}
             }
         }
     }
@@ -165,7 +165,7 @@ fn User(cx: Scope, id: i32) -> Element {
         None => {
             render! {
                 BackHome {}
-                "API stuff loading thing idk"
+                ShowLoading {}
             }
         }
     }
