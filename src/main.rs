@@ -1,14 +1,18 @@
 #![allow(non_snake_case)]
 
-use dioxus::prelude::*;
-use dioxus_desktop::{Config, LogicalSize, WindowBuilder};
-use dioxus_router::prelude::*;
-
+mod app_config;
 mod components;
 mod models;
 mod route;
 
+use dioxus::prelude::*;
+use dioxus_desktop::{Config, LogicalSize, WindowBuilder};
+use dioxus_router::prelude::*;
+
+use app_config::AppConfig;
+
 fn App(cx: Scope) -> Element {
+    use_shared_state_provider(cx, || AppConfig::load().unwrap_or_default());
     render! {
         style { include_str!("../style.css") }
         Router::<route::Route> {}

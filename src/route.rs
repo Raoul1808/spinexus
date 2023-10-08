@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 use dioxus_router::prelude::*;
 
+use crate::app_config::AppConfig;
 use crate::components::*;
 use crate::models::{get_chart, get_user};
 
@@ -22,10 +23,11 @@ pub enum Route {
     Chart { id: i32 },
     #[route("/user/:id")]
     User { id: i32 },
+    #[route("/settings")]
+    AppSettings {},
     #[route("/:..route")]
     NotFound { route: Vec<String> },
 }
-
 
 fn Index(cx: Scope) -> Element {
     render! {
@@ -57,6 +59,12 @@ fn Index(cx: Scope) -> Element {
                     to: Route::HotWeekCharts {},
                     "Hot this week"
                 }
+            }
+        }
+        div {
+            Link {
+                to: Route::AppSettings {},
+                "Application Settings"
             }
         }
     }
@@ -156,6 +164,24 @@ fn User(cx: Scope, id: i32) -> Element {
             render! {
                 BackHome {}
                 "API stuff loading thing idk"
+            }
+        }
+    }
+}
+
+fn AppSettings(cx: Scope) -> Element {
+    let config = use_shared_state::<AppConfig>(cx).unwrap();
+    let customs_path = &config.read().customs_path;
+    
+    render! {
+        BackHome {}
+        div {
+            span {
+                "Current path: {customs_path}"
+            }
+            button {
+                onclick: move |_event| { println!("todo: make the event handler") },
+                "Browse"
             }
         }
     }
