@@ -87,8 +87,8 @@ pub fn UserFullDisplay<'a>(cx: Scope, user: &'a User) -> Element {
 }
 
 #[inline_props]
-pub fn ChartFullDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
-    let Chart {
+pub fn ChartFullDisplay<'a>(cx: Scope, chart: &'a FullChart) -> Element {
+    let FullChart {
         title,
         artist,
         charter,
@@ -96,6 +96,8 @@ pub fn ChartFullDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
         cover,
         ..
     } = chart;
+
+    let zip = &chart.paths.zip;
 
     render! {
         div {
@@ -115,18 +117,18 @@ pub fn ChartFullDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
             div {
                 "Charted by {charter}"
             }
-            if let Some(uploader) = uploader {
-                rsx! {
-                    UserShortDisplay { id: *uploader }
-                }
+            UserShortDisplay { id: *uploader }
+            button {
+                onclick: move |event| { println!("Event {event:?} with zip {zip}"); },
+                "Download"
             }
         }
     }
 }
 
 #[inline_props]
-fn ChartShortDisplay<'a>(cx: Scope, chart: &'a Chart) -> Element {
-    let Chart {
+fn ChartShortDisplay<'a>(cx: Scope, chart: &'a PartialChart) -> Element {
+    let PartialChart {
         title,
         artist,
         charter,
