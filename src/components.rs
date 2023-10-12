@@ -1,9 +1,12 @@
 use dioxus::prelude::*;
 use dioxus_router::components::Link;
 
+use std::path::PathBuf;
+
+use crate::app_config::AppConfig;
 use crate::route::Route;
 use crate::models::*;
-use crate::download::download_file;
+use crate::download::download_and_extract_zip;
 
 #[derive(PartialEq)]
 pub enum ChartListingMode {
@@ -98,6 +101,8 @@ pub fn UserFullDisplay<'a>(cx: Scope, user: &'a User) -> Element {
 
 #[inline_props]
 pub fn ChartFullDisplay<'a>(cx: Scope, chart: &'a FullChart) -> Element {
+    let app_config = use_shared_state::<AppConfig>(cx).unwrap();
+
     let FullChart {
         title,
         artist,
@@ -132,11 +137,13 @@ pub fn ChartFullDisplay<'a>(cx: Scope, chart: &'a FullChart) -> Element {
             button {
                 onclick: move |_| {
                     let zip = zip.clone();
-                    // todo: download to cache path and extract to defined customs location
-                    let path = format!("/home/mew/Desktop/{file_reference}.zip");
+                    let destination = app_config.read().customs_path.clone();
+                    let file_reference = file_reference.clone();
+                    let proj_dir = directories::ProjectDirs::from("rs", "", "spinexus").unwrap();
+                    let cache_dir = PathBuf::from(proj_dir.cache_dir()).to_str().unwrap().to_string();
                     async {
-                        println!("Downloading file {zip} to {path}");
-                        match download_file(zip, path).await {
+                        println!("Downloading file {zip}");
+                        match download_and_extract_zip(zip, cache_dir, destination, file_reference).await {
                             Ok(_) => println!("Download complete!"),
                             Err(e) => println!("Error {e}"),
                         };
