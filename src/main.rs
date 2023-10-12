@@ -2,6 +2,7 @@
 
 mod app_config;
 mod components;
+mod download;
 mod models;
 mod route;
 

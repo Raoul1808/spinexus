@@ -3,6 +3,7 @@ use dioxus_router::components::Link;
 
 use crate::route::Route;
 use crate::models::*;
+use crate::download::download_file;
 
 #[derive(PartialEq)]
 pub enum ChartListingMode {
@@ -103,6 +104,7 @@ pub fn ChartFullDisplay<'a>(cx: Scope, chart: &'a FullChart) -> Element {
         charter,
         uploader,
         cover,
+        file_reference,
         ..
     } = chart;
 
@@ -128,7 +130,18 @@ pub fn ChartFullDisplay<'a>(cx: Scope, chart: &'a FullChart) -> Element {
             }
             UserShortDisplay { id: *uploader }
             button {
-                onclick: move |event| { println!("Event {event:?} with zip {zip}"); },
+                onclick: move |_| {
+                    let zip = zip.clone();
+                    // todo: download to cache path and extract to defined customs location
+                    let path = format!("/home/mew/Desktop/{file_reference}.zip");
+                    async {
+                        println!("Downloading file {zip} to {path}");
+                        match download_file(zip, path).await {
+                            Ok(_) => println!("Download complete!"),
+                            Err(e) => println!("Error {e}"),
+                        };
+                    }
+                },
                 "Download"
             }
         }

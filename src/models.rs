@@ -1,6 +1,7 @@
 use serde::{Serialize, Deserialize, de::DeserializeOwned};
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct FullChart {
     pub id: i32,
     pub title: String,
@@ -10,6 +11,7 @@ pub struct FullChart {
     pub uploader: i32,
     pub cover: String,
     pub paths: ChartPaths,
+    pub file_reference: String,
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
