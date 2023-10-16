@@ -73,42 +73,86 @@ fn Index(cx: Scope) -> Element {
 }
 
 fn NewCharts(cx: Scope) -> Element {
+    let mut page = use_state(cx, || 0);
     render! {
         BackHome{}
         h1 {
-            "Newest charts"
+            "Newest charts - Page {page}"
         }
-        ChartListing { mode: ChartListingMode::New }
+        if **page > 0 {
+            rsx! {
+                button { onclick: move |_| page -= 1, "Previous Page" },
+            }
+        }
+        if **page < 6 {
+            rsx! {
+                button { onclick: move |_| page += 1, "Next Page" },
+            }
+        }
+        ChartListing { mode: ChartListingMode::New(**page) }
     }
 }
 
 fn UpdatedCharts(cx: Scope) -> Element {
+    let mut page = use_state(cx, || 0);
     render! {
         BackHome {}
         h1 {
             "Last updated charts"
         }
-        ChartListing { mode: ChartListingMode::Updated }
+        if **page > 0 {
+            rsx! {
+                button { onclick: move |_| page -= 1, "Previous Page" },
+            }
+        }
+        if **page < 6 {
+            rsx! {
+                button { onclick: move |_| page += 1, "Next Page" },
+            }
+        }
+        ChartListing { mode: ChartListingMode::Updated(**page) }
     }
 }
 
 fn HotMonthCharts(cx: Scope) -> Element {
+    let mut page = use_state(cx, || 0);
     render! {
         BackHome {}
         h1 {
             "Hot this month"
         }
-        ChartListing { mode: ChartListingMode::HotMonth }
+        if **page > 0 {
+            rsx! {
+                button { onclick: move |_| page -= 1, "Previous Page" },
+            }
+        }
+        if **page < 6 {
+            rsx! {
+                button { onclick: move |_| page += 1, "Next Page" },
+            }
+        }
+        ChartListing { mode: ChartListingMode::HotMonth(**page) }
     }
 }
 
 fn HotWeekCharts(cx: Scope) -> Element {
+    let mut page = use_state(cx, || 0);
     render! {
         BackHome {}
         h1 {
             "Hot this week"
         }
-        ChartListing { mode: ChartListingMode::HotWeek }
+        if **page > 0 {
+            rsx! {
+                button { onclick: move |_| page -= 1, "Previous Page" },
+            }
+        }
+        if **page < 6 {
+            rsx! {
+                button { onclick: move |_| page += 1, "Next Page" },
+            }
+        }
+        ChartListing { mode: ChartListingMode::HotWeek(**page) }
     }
 }
 

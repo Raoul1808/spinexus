@@ -8,12 +8,12 @@ use crate::route::Route;
 use crate::models::*;
 use crate::download::download_and_extract_zip;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 pub enum ChartListingMode {
-    New,
-    Updated,
-    HotMonth,
-    HotWeek,
+    New(i32),
+    Updated(i32),
+    HotMonth(i32),
+    HotWeek(i32),
     User(i32),
 }
 
@@ -191,11 +191,11 @@ fn ChartShortDisplay<'a>(cx: Scope, chart: &'a PartialChart) -> Element {
 #[inline_props]
 pub fn ChartListing(cx: Scope, mode: ChartListingMode) -> Element {
     let charts = match mode {
-        ChartListingMode::New => use_future(cx, (), |_| get_new_charts(0)),
-        ChartListingMode::Updated => use_future(cx, (), |_| get_updated_charts(0)),
-        ChartListingMode::HotWeek => use_future(cx, (), |_| get_weekly_hot_charts(0)),
-        ChartListingMode::HotMonth => use_future(cx, (), |_| get_monthly_hot_charts(0)),
-        ChartListingMode::User(id) => use_future(cx, (), |_| get_charts_for_user(*id)),
+        ChartListingMode::New(page) => use_future(cx, (page,), |_| get_new_charts(*page)),
+        ChartListingMode::Updated(page) => use_future(cx, (page,), |_| get_updated_charts(*page)),
+        ChartListingMode::HotWeek(page) => use_future(cx, (page,), |_| get_weekly_hot_charts(*page)),
+        ChartListingMode::HotMonth(page) => use_future(cx, (page,), |_| get_monthly_hot_charts(*page)),
+        ChartListingMode::User(id) => use_future(cx, (id,), |_| get_charts_for_user(*id)),
     };
 
     match charts.value() {
