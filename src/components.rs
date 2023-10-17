@@ -21,8 +21,9 @@ pub fn BackHome(cx: Scope) -> Element {
     render! {
         div {
             Link {
+                class: "btn btn-outline-blue m-3",
                 to: Route::Index {},
-                "Home"
+                "<< Home"
             }
         }
     }
@@ -31,7 +32,7 @@ pub fn BackHome(cx: Scope) -> Element {
 pub fn ShowLoading(cx: Scope) -> Element {
     render! {
         div {
-            class: "center",
+            class: "text-center",
             "Loading..."
         }
     }
@@ -48,16 +49,27 @@ fn UserShortDisplay(cx: Scope, id: i32) -> Element {
                 ..
             } = user;
             render! {
-                Link {
-                    to: Route::User { id: *id },
-                    div {
-                        class: "user-short-view",
-                        img {
-                            width: "64px",
-                            src: "{avatar}"
-                        }
+                div {
+                    class: "relative rounded bg-gray-200 no-underline m-1 max-w-sm overflow-hidden",
+                    Link {
+                        to: Route::User { id: *id },
                         div {
-                            "{username}"
+                            class: "flex items-center",
+                            img {
+                                class: "absolute aspect-square rounded-full shadow-lg w-28 h-28 -left-6",
+                                src: "{avatar}"
+                            }
+                            div {
+                                class: "min-w-0 py-5 pl-28",
+                                p {
+                                    class: "font-bold text-gray-900",
+                                    "{username}"
+                                }
+                                p {
+                                    class: "text-sm font-medium text-slate-700",
+                                    "Uploader"
+                                }
+                            }
                         }
                     }
                 }
@@ -166,21 +178,31 @@ fn ChartShortDisplay<'a>(cx: Scope, chart: &'a PartialChart) -> Element {
     } = chart;
 
     render! {
-        Link {
-            class: "no-underline",
-            to: Route::Chart { id: chart.id },
-            div {
-                class: "chart-short-view",
-                img {
-                    src: "{cover}"
-                }
+        div {
+            class: "rounded-xl bg-gray-200 no-underline m-1",
+            Link {
+                to: Route::Chart { id: chart.id },
                 div {
-                    div {
-                        font_size: "1.5em",
-                        "{title}"
+                    class: "flex items-center space-x-4 p-4",
+                    img {
+                        class: "aspect-square rounded-lg object-left",
+                        width: 88,
+                        src: "{cover}"
                     }
                     div {
-                        "{artist} • Charted by {charter}"
+                        class: "flex-auto space-y-1 font-semibold",
+                        p {
+                            class: "text-2xl",
+                            "{title}"
+                        }
+                        p {
+                            class: "text-gray-800",
+                            "{artist}"
+                        }
+                        p {
+                            class: "text-gray-600",
+                            "Charted by {charter}"
+                        }
                     }
                 }
             }
@@ -202,7 +224,7 @@ pub fn ChartListing(cx: Scope, mode: ChartListingMode) -> Element {
         Some(Ok(charts)) => {
             render! {
                 div {
-                    class: "chart-list-view",
+                    class: "grid grid-cols-3",
                     for chart in &charts {
                         ChartShortDisplay { chart: chart }
                     }

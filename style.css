@@ -1,62 +1,23 @@
-html {
-    background-color: rgb(225, 225, 225);
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn {
+    @apply font-bold py-2 px-4 rounded;
 }
 
-.no-underline {
-    text-decoration: none;
+.btn-blue {
+    @apply bg-blue-500 text-white;
 }
 
-.chart-list-view {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+.btn-blue:hover {
+    @apply bg-blue-700;
 }
 
-.chart-short-view {
-    display: flex;
-    padding: 0.5em;
-    position: relative;
-    background-color: rgb(187, 187, 187);
-    border-radius: 3px;
+.btn-outline-blue {
+    @apply bg-transparent text-blue-500 border border-blue-500;
 }
 
-.chart-short-view img {
-    width: 64px;
-    vertical-align: middle;
-    margin-right: 0.5rem;
-}
-
-.chart-short-view div {
-    display: flex;
-    flex-direction: column;
-}
-
-.chart-short-view div div {
-    display: flex;
-    flex-direction: row;
-    color: black;
-}
-
-.chart-short-view div div + div {
-    color: dimgray;
-}
-
-.user-short-view {
-    display: flex;
-    padding: 0.5em;
-    position: relative;
-    background-color: rgb(200, 200, 200);
-    border-radius: 3px;
-}
-
-.user-short-view img {
-    width: 32px;
-    vertical-align: middle;
-    margin-right: 0.5rem;
-}
-
-.center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.btn-outline-blue:hover {
+    @apply bg-blue-700 text-white border-transparent;
 }

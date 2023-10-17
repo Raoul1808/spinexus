@@ -35,39 +35,33 @@ fn Index(cx: Scope) -> Element {
     render! {
         BackHome {}
         div {
+            class: "text-5xl mx-auto my-3",
             "This is the index page!"
         }
-        ul {
-            li {
-                Link {
-                    to: Route::NewCharts {},
-                    "New"
-                }
-            }
-            li {
-                Link {
-                    to: Route::UpdatedCharts {},
-                    "Updated"
-                }
-            }
-            li {
-                Link {
-                    to: Route::HotMonthCharts {},
-                    "Hot this month"
-                }
-            }
-            li {
-                Link {
-                    to: Route::HotWeekCharts {},
-                    "Hot this week"
-                }
-            }
+        Link {
+            class: "btn btn-blue m-1",
+            to: Route::NewCharts {},
+            "New"
         }
-        div {
-            Link {
-                to: Route::AppSettings {},
-                "Application Settings"
-            }
+        Link {
+            class: "btn btn-blue m-1",
+            to: Route::UpdatedCharts {},
+            "Updated"
+        }
+        Link {
+            class: "btn btn-blue m-1",
+            to: Route::HotMonthCharts {},
+            "Hot this month"
+        }
+        Link {
+            class: "btn btn-blue m-1",
+            to: Route::HotWeekCharts {},
+            "Hot this week"
+        }
+        Link {
+            class: "btn btn-blue m-1",
+            to: Route::AppSettings {},
+            "Application Settings"
         }
     }
 }
@@ -81,12 +75,12 @@ fn NewCharts(cx: Scope) -> Element {
         }
         if **page > 0 {
             rsx! {
-                button { onclick: move |_| page -= 1, "Previous Page" },
+                button { class: "btn btn-blue", onclick: move |_| page -= 1, "Previous Page" },
             }
         }
         if **page < 6 {
             rsx! {
-                button { onclick: move |_| page += 1, "Next Page" },
+                button { class: "btn btn-blue", onclick: move |_| page += 1, "Next Page" },
             }
         }
         ChartListing { mode: ChartListingMode::New(**page) }
@@ -102,12 +96,12 @@ fn UpdatedCharts(cx: Scope) -> Element {
         }
         if **page > 0 {
             rsx! {
-                button { onclick: move |_| page -= 1, "Previous Page" },
+                button { class: "btn btn-blue", onclick: move |_| page -= 1, "Previous Page" },
             }
         }
         if **page < 6 {
             rsx! {
-                button { onclick: move |_| page += 1, "Next Page" },
+                button { class: "btn btn-blue", onclick: move |_| page += 1, "Next Page" },
             }
         }
         ChartListing { mode: ChartListingMode::Updated(**page) }
@@ -123,12 +117,12 @@ fn HotMonthCharts(cx: Scope) -> Element {
         }
         if **page > 0 {
             rsx! {
-                button { onclick: move |_| page -= 1, "Previous Page" },
+                button { class: "btn btn-blue", onclick: move |_| page -= 1, "Previous Page" },
             }
         }
         if **page < 6 {
             rsx! {
-                button { onclick: move |_| page += 1, "Next Page" },
+                button { class: "btn btn-blue", onclick: move |_| page += 1, "Next Page" },
             }
         }
         ChartListing { mode: ChartListingMode::HotMonth(**page) }
@@ -144,12 +138,12 @@ fn HotWeekCharts(cx: Scope) -> Element {
         }
         if **page > 0 {
             rsx! {
-                button { onclick: move |_| page -= 1, "Previous Page" },
+                button { class: "btn btn-blue", onclick: move |_| page -= 1, "Previous Page" },
             }
         }
         if **page < 6 {
             rsx! {
-                button { onclick: move |_| page += 1, "Next Page" },
+                button { class: "btn btn-blue", onclick: move |_| page += 1, "Next Page" },
             }
         }
         ChartListing { mode: ChartListingMode::HotWeek(**page) }
