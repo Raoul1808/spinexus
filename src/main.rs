@@ -15,7 +15,7 @@ use app_config::AppConfig;
 fn App(cx: Scope) -> Element {
     use_shared_state_provider(cx, || AppConfig::load().unwrap_or_default());
     render! {
-        style { include_str!("../style.css") }
+        style { include_str!("../tailwind.css") }
         Router::<route::Route> {}
     }
 }
