@@ -10,11 +10,14 @@ Prerequisites:
 - Latest stable Rust version
 - Cargo (duh)
 - Platform-specific packages installed. Visit [Dioxus' website](https://dioxuslabs.com/learn/0.4/getting_started/desktop) for more info.
+- Tailwind CSS CLI
 
 Steps:
 1. Clone this repository (`git clone https://github.com/Raoul1808/spinexus.git`)
-2. Build the project (`cd spinexus` and `cargo build`)
-3. Run the executable (or type `cargo run`)
+2. cd into the directory (`cd spinexus`)
+3. Run the file `tailwind.sh` (or the command inside if you can't run a shell file for some reason)
+4. Build the project (`cargo build`)
+5. Run the executable (or type `cargo run`)
 
 ## License
 
