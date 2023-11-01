@@ -15,6 +15,7 @@ pub enum ChartListingMode {
     HotMonth(i32),
     HotWeek(i32),
     User(i32),
+    SearchChart(String, i32),
 }
 
 pub fn BackHome(cx: Scope) -> Element {
@@ -218,6 +219,7 @@ pub fn ChartListing(cx: Scope, mode: ChartListingMode) -> Element {
         ChartListingMode::HotWeek(page) => use_future(cx, (page,), |_| get_weekly_hot_charts(*page)),
         ChartListingMode::HotMonth(page) => use_future(cx, (page,), |_| get_monthly_hot_charts(*page)),
         ChartListingMode::User(id) => use_future(cx, (id,), |_| get_charts_for_user(*id)),
+        ChartListingMode::SearchChart(query, _) => use_future(cx, (query,), |_| search_chart(query.clone())),
     };
 
     match charts.value() {
@@ -225,8 +227,37 @@ pub fn ChartListing(cx: Scope, mode: ChartListingMode) -> Element {
             render! {
                 div {
                     class: "grid grid-cols-3",
-                    for chart in &charts {
-                        ChartShortDisplay { chart: chart }
+                    if let ChartListingMode::SearchChart(query, page) = mode {
+                        let cur_chart = (page * 12) as usize;
+                        let max_chart = std::cmp::min(((page + 1) * 12) as usize, charts.len());
+                        println!("{}, {}, {}, {:#?}", page, cur_chart, max_chart, charts);
+                        let charts = charts.get(cur_chart..max_chart);
+                        if let Some(charts) = charts {
+                            if charts.len() <= 0 {
+                                rsx! {
+                                    "No charts found for {query}"
+                                }
+                            }
+                            else {
+                                rsx! {
+                                    for chart in &charts {
+                                        ChartShortDisplay { chart: chart }
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            rsx! {
+                                "Search out of bounds"
+                            }
+                        }
+                    }
+                    else {
+                        rsx! {
+                            for chart in &charts {
+                                ChartShortDisplay { chart: chart }
+                            }
+                        }
                     }
                 }
             }

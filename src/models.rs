@@ -25,7 +25,7 @@ pub struct ChartPaths {
 pub struct PartialChart {
     pub id: i32,
     pub title: String,
-    pub subtitle: String,
+    pub subtitle: Option<String>,
     pub artist: String,
     pub charter: String,
     pub cover: String,
@@ -82,4 +82,51 @@ pub async fn get_user(id: i32) -> Result<User, reqwest::Error> {
 
 pub async fn get_charts_for_user(id: i32) -> Result<Vec<PartialChart>, reqwest::Error> {
     request_data(format!("https://spinsha.re/api/user/{}/charts", id)).await
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct SearchChartBody {
+    pub search_query: String,
+    pub diff_easy: bool,
+    pub diff_normal: bool,
+    pub diff_hard: bool,
+    pub diff_expert: bool,
+    #[serde(rename = "diffXD")]
+    pub diff_xd: bool,
+    pub diff_rating_from: i32,
+    pub diff_rating_to: i32,
+    pub show_explicit: bool,
+}
+
+impl Default for SearchChartBody {
+    fn default() -> Self {
+        Self {
+            search_query: "".into(),
+            diff_easy: true,
+            diff_normal: true,
+            diff_hard: true,
+            diff_expert: true,
+            diff_xd: true,
+            diff_rating_from: 0,
+            diff_rating_to: 100,
+            show_explicit: false,
+        }
+    }
+}
+
+pub async fn search_chart(query: String) -> Result<Vec<PartialChart>, reqwest::Error> {
+    let client = reqwest::Client::default();
+    let body = SearchChartBody {
+        search_query: query,
+        ..Default::default()
+    };
+    let res = client.post(format!("https://spinsha.re/api/searchCharts"))
+        .json(&body)
+        .send()
+        .await?
+        .error_for_status()?
+        .json::<SpinRequest<Vec<PartialChart>>>()
+        .await?;
+    Ok(res.data)
 }

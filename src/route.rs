@@ -20,6 +20,8 @@ pub enum Route {
         HotMonthCharts {},
         #[route("/week")]
         HotWeekCharts {},
+        #[route("/search")]
+        SearchCharts {},
     #[end_nest]
     #[route("/chart/:id")]
     Chart { id: i32 },
@@ -57,6 +59,11 @@ fn Index(cx: Scope) -> Element {
             class: "btn btn-blue m-1",
             to: Route::HotWeekCharts {},
             "Hot this week"
+        }
+        Link {
+            class: "btn btn-blue m-1",
+            to: Route::SearchCharts {},
+            "Search charts"
         }
         Link {
             class: "btn btn-blue m-1",
@@ -147,6 +154,51 @@ fn HotWeekCharts(cx: Scope) -> Element {
             }
         }
         ChartListing { mode: ChartListingMode::HotWeek(**page) }
+    }
+}
+
+fn SearchCharts(cx: Scope) -> Element {
+    let mut page = use_state(cx, || 0);
+    let query = use_state(cx, || "".to_string());
+    render! {
+        BackHome {},
+        h1 {
+            "Search charts"
+        }
+        form {
+            onsubmit: move |event| {
+                let search_query = match event.values.get("search-query") {
+                    Some(q) => &q[0],
+                    None => return,
+                };
+                query.with_mut(|q| {
+                    page -= **page;  // reset page count
+                    *q = search_query.to_string()
+                });
+            },
+            input {
+                name: "search-query",
+                r#type: "text"
+            }
+            input {
+                r#type: "submit",
+            }
+        }
+        if **page > 0 {
+            rsx! {
+                button { class: "btn btn-blue", onclick: move |_| page -= 1, "Previous Page" },
+            }
+        }
+        if **page < 6 {
+            rsx! {
+                button { class: "btn btn-blue", onclick: move |_| page += 1, "Next Page" },
+            }
+        }
+        if !query.is_empty() {
+            rsx! {
+                ChartListing { mode: ChartListingMode::SearchChart(query.to_string(), **page) }
+            }
+        }
     }
 }
 
