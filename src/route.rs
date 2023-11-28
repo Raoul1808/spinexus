@@ -20,8 +20,8 @@ pub enum Route {
         HotMonthCharts {},
         #[route("/week")]
         HotWeekCharts {},
-        #[route("/search")]
-        SearchCharts {},
+        #[route("/search/:query")]
+        SearchCharts { query: String },
     #[end_nest]
     #[route("/chart/:id")]
     Chart { id: i32 },
@@ -34,8 +34,33 @@ pub enum Route {
 }
 
 fn Index(cx: Scope) -> Element {
+    let query = use_state(cx, || "".to_string());
+    let navigator = use_navigator(cx);
+    if !query.is_empty() {
+        navigator.push(Route::SearchCharts { query: query.to_string() });
+    }
     render! {
-        BackHome {}
+        HeaderButtons {}
+        div {
+            form {
+                onsubmit: move |event| {
+                    let search_query = match event.values.get("search-query") {
+                        Some(q) => &q[0],
+                        None => return,
+                    };
+                    query.with_mut(|q| {
+                        *q = search_query.to_string()
+                    });
+                },
+                input {
+                    name: "search-query",
+                    r#type: "text",
+                }
+                input {
+                    r#type: "submit",
+                }
+            }
+        }
         div {
             class: "text-5xl mx-auto my-3",
             "This is the index page!"
@@ -62,11 +87,6 @@ fn Index(cx: Scope) -> Element {
         }
         Link {
             class: "btn btn-blue m-1",
-            to: Route::SearchCharts {},
-            "Search charts"
-        }
-        Link {
-            class: "btn btn-blue m-1",
             to: Route::AppSettings {},
             "Application Settings"
         }
@@ -76,7 +96,7 @@ fn Index(cx: Scope) -> Element {
 fn NewCharts(cx: Scope) -> Element {
     let mut page = use_state(cx, || 0);
     render! {
-        BackHome{}
+        HeaderButtons{}
         h1 {
             "Newest charts - Page {page}"
         }
@@ -97,7 +117,7 @@ fn NewCharts(cx: Scope) -> Element {
 fn UpdatedCharts(cx: Scope) -> Element {
     let mut page = use_state(cx, || 0);
     render! {
-        BackHome {}
+        HeaderButtons {}
         h1 {
             "Last updated charts"
         }
@@ -118,7 +138,7 @@ fn UpdatedCharts(cx: Scope) -> Element {
 fn HotMonthCharts(cx: Scope) -> Element {
     let mut page = use_state(cx, || 0);
     render! {
-        BackHome {}
+        HeaderButtons {}
         h1 {
             "Hot this month"
         }
@@ -139,7 +159,7 @@ fn HotMonthCharts(cx: Scope) -> Element {
 fn HotWeekCharts(cx: Scope) -> Element {
     let mut page = use_state(cx, || 0);
     render! {
-        BackHome {}
+        HeaderButtons {}
         h1 {
             "Hot this week"
         }
@@ -157,32 +177,13 @@ fn HotWeekCharts(cx: Scope) -> Element {
     }
 }
 
-fn SearchCharts(cx: Scope) -> Element {
+#[inline_props]
+fn SearchCharts(cx: Scope, query: String) -> Element {
     let mut page = use_state(cx, || 0);
-    let query = use_state(cx, || "".to_string());
     render! {
-        BackHome {},
+        HeaderButtons {},
         h1 {
-            "Search charts"
-        }
-        form {
-            onsubmit: move |event| {
-                let search_query = match event.values.get("search-query") {
-                    Some(q) => &q[0],
-                    None => return,
-                };
-                query.with_mut(|q| {
-                    page -= **page;  // reset page count
-                    *q = search_query.to_string()
-                });
-            },
-            input {
-                name: "search-query",
-                r#type: "text"
-            }
-            input {
-                r#type: "submit",
-            }
+            "Search results for {query}"
         }
         if **page > 0 {
             rsx! {
@@ -194,11 +195,7 @@ fn SearchCharts(cx: Scope) -> Element {
                 button { class: "btn btn-blue", onclick: move |_| page += 1, "Next Page" },
             }
         }
-        if !query.is_empty() {
-            rsx! {
-                ChartListing { mode: ChartListingMode::SearchChart(query.to_string(), **page) }
-            }
-        }
+        ChartListing { mode: ChartListingMode::SearchChart(query.to_string(), **page) }
     }
 }
 
@@ -217,19 +214,19 @@ fn Chart(cx: Scope, id: i32) -> Element {
     match chart.value() {
         Some(Ok(chart)) => {
             render! {
-                BackHome {}
+                HeaderButtons {}
                 ChartFullDisplay { chart: chart }
             }
         }
         Some(Err(err)) => {
             render! {
-                BackHome {}
+                HeaderButtons {}
                 "An error occurred while fetching chart: {err}"
             }
         }
         None => {
             render! {
-                BackHome {}
+                HeaderButtons {}
                 ShowLoading {}
             }
         }
@@ -242,19 +239,19 @@ fn User(cx: Scope, id: i32) -> Element {
     match user.value() {
         Some(Ok(user)) => {
             render! {
-                BackHome{}
+                HeaderButtons{}
                 UserFullDisplay { user: user }
             }
         }
         Some(Err(err)) => {
             render! {
-                BackHome {}
+                HeaderButtons {}
                 "An error occurred while fetching user: {err}"
             }
         }
         None => {
             render! {
-                BackHome {}
+                HeaderButtons {}
                 ShowLoading {}
             }
         }
@@ -266,7 +263,7 @@ fn AppSettings(cx: Scope) -> Element {
     let customs_path = &config.read().customs_path;
 
     render! {
-        BackHome {}
+        HeaderButtons {}
         div {
             span {
                 "Current path: {customs_path}"

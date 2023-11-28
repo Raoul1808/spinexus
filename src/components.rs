@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use dioxus_router::components::Link;
+use dioxus_router::components::{Link, GoBackButton, GoForwardButton};
 
 use std::path::PathBuf;
 
@@ -18,13 +18,25 @@ pub enum ChartListingMode {
     SearchChart(String, i32),
 }
 
-pub fn BackHome(cx: Scope) -> Element {
+pub fn HeaderButtons(cx: Scope) -> Element {
     render! {
         div {
             Link {
                 class: "btn btn-outline-blue m-3",
                 to: Route::Index {},
                 "<< Home"
+            }
+            GoBackButton {
+                div {
+                    class: "btn btn-outline-blue m-3",
+                    "< Back"
+                }
+            }
+            GoForwardButton {
+                div {
+                    class: "btn btn-outline-blue m-3",
+                    "Forward >"
+                }
             }
         }
     }

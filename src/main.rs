@@ -18,7 +18,9 @@ fn App(cx: Scope) -> Element {
         style { include_str!("../tailwind.css") }
         div {
             class: "container mx-auto px-1 pt-2",
-            Router::<route::Route> {}
+            Router::<route::Route> {
+                config: || RouterConfig::default().history(MemoryHistory::default())
+            }
         }
     }
 }
