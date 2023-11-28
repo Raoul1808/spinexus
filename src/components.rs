@@ -245,7 +245,7 @@ pub fn ChartListing(cx: Scope, mode: ChartListingMode) -> Element {
                         println!("{}, {}, {}, {:#?}", page, cur_chart, max_chart, charts);
                         let charts = charts.get(cur_chart..max_chart);
                         if let Some(charts) = charts {
-                            if charts.len() <= 0 {
+                            if charts.is_empty() {
                                 rsx! {
                                     "No charts found for {query}"
                                 }

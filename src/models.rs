@@ -121,7 +121,7 @@ pub async fn search_chart(query: String) -> Result<Vec<PartialChart>, reqwest::E
         search_query: query,
         ..Default::default()
     };
-    let res = client.post(format!("https://spinsha.re/api/searchCharts"))
+    let res = client.post("https://spinsha.re/api/searchCharts")
         .json(&body)
         .send()
         .await?
